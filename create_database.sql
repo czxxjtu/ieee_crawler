@@ -1,5 +1,5 @@
 CREATE TABLE Papers (
-  number VARCHAR(20) NOT NULL UNIQUE,
+  number VARCHAR(20),
   doi VARCHAR(50),
   spage INTEGER,
   epage INTEGER,
@@ -8,37 +8,37 @@ CREATE TABLE Papers (
   publication VARCHAR(255),
   year INTEGER,
   rank INTEGER,
-  title VARCHAR(1000) NOT NULL,
+  title VARCHAR(1000),
   abstract VARCHAR(3000)
-);
+) ENGINE = MEMORY;
 
 
 CREATE TABLE Terms (
   term VARCHAR(255) UNIQUE,
   id INTEGER AUTO_INCREMENT PRIMARY KEY
-);
+) ENGINE = MEMORY;
 
 CREATE TABLE PaperTerms (
   paperid varchar(20),
   termid INTEGER,
   PRIMARY KEY (paperid, termid)
-);
+) ENGINE = MEMORY;
 
 CREATE TABLE Authors (
   name VARCHAR(200) UNIQUE,
   id INTEGER AUTO_INCREMENT PRIMARY KEY
-);
+) ENGINE = MEMORY;
 
 CREATE TABLE PaperAuthors (
   paperid VARCHAR(20),
   authorid INTEGER,
   PRIMARY KEY (paperid, authorid)
-);
+) ENGINE = MEMORY;
 
 CREATE TABLE Publishers (
   name VARCHAR(200),
   id INTEGER AUTO_INCREMENT PRIMARY KEY
-);
+) ENGINE = MEMORY;
 
 CREATE TABLE Log (
   date DATE,

@@ -3,9 +3,9 @@
 from database import *
 from papers import *
 from document import *
-import logging
-logging.basicConfig()
-logging.getLogger('sqlalchemy').setLevel(logging.DEBUG)
+# import logging
+# logging.basicConfig()
+# logging.getLogger('sqlalchemy').setLevel(logging.DEBUG)
 
 def write_paper_to_db(paper, papers_table, terms_table,
                       paperterms_table, authors_table,
@@ -21,7 +21,6 @@ def write_paper_to_db(paper, papers_table, terms_table,
     :return:
     """
     papers_table.add_paper(paper)
-    print(paper.terms)
     for t in paper.terms:
         tid = terms_table.get_id_or_add(t)
         if not paperterms_table.exists_paper_term_by_id(paper.number, tid):
@@ -42,18 +41,26 @@ def retrieve_papers(publication, papers_table, terms_table,
     :return:
     """
     current = publication.get_last_rank(papers_table)
-    urls = journal_articles_requests_urls(publication.title, cur=current,
-                                          articles_per_request=1000)
-    for url in urls:
-        print('read --', url)
-        paper_dicts = retrieve_documents_from_url(url)
-        paperlist = []
-        for pd in paper_dicts:
-            paperlist.append(Paper(publication.title, pd))
-        for p in paperlist:
-            write_paper_to_db(p, papers_table, terms_table,
-                              paperterms_table, authors_table,
-                              paperauthors_table)
+    try:
+        log('get publication urls', publication.title, 'position', str(current))
+        urls = journal_articles_requests_urls(publication.title, cur=current, articles_per_request=1000)
+        # urls = journal_articles_requests_urls(publication.title,
+        #                                       articles_per_request=1000)
+        for url in urls:
+            try:
+                log(url)
+                paper_dicts = retrieve_documents_from_url(url)
+                paperlist = []
+                for pd in paper_dicts:
+                    paperlist.append(Paper(publication.title, pd))
+                for p in paperlist:
+                    write_paper_to_db(p, papers_table, terms_table,
+                                      paperterms_table, authors_table,
+                                      paperauthors_table)
+            except Exception as e:
+                log(str(e))
+    except Exception as e:
+        log(str(e))
 
 
 def get_publication(publications_table):

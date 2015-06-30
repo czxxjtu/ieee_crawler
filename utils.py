@@ -67,6 +67,6 @@ def log(*args):
                            timestamp=timestamp,
                            operation=caller,
                            result=' '.join(args))
-    print(' '.join([cur_date, cur_time, caller] + list(args)))
+    # print(' '.join([cur_date, cur_time, caller] + list(args)))
 
 
