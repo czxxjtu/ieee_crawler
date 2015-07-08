@@ -45,7 +45,8 @@ class Paper:
     """
     A paper
     """
-    def __init__(self, publication, doc=None, remove_stopwords=True):
+    def __init__(self, publication, doc=None, remove_stopwords=False,
+                 type=None):
         """
 
         :return:
@@ -66,6 +67,7 @@ class Paper:
         self.terms = None
         self.volume = None
         self.abstract = None
+        self.type = type
         if doc is not None:
             self.from_dict(doc, remove_stopwords)
 
@@ -89,6 +91,7 @@ class Paper:
         ----
         :return:
         """
+        type = self.type
         number = self.number
         if self.doi is not None:
             doi = self.doi
@@ -132,12 +135,17 @@ class Paper:
             terms = '|'.join(self.terms)
         else:
             terms = ''
+        if self.affiliation is not None:
+            affiliation = self.affiliation
+        else:
+            affiliation = ''
 
-        result = [number, doi, spage, epage, issue, partnum, publication,
-                  year, rank, title, abstract, authors, terms]
+        result = [type, number, doi, spage, epage, issue,
+                  partnum, publication, year, rank, title,
+                  abstract, authors, terms, affiliation]
         # fields = ['number', 'doi', 'spage', 'epage', 'issue', 'partnum',
         #           'publication', 'year', 'rank', 'title', 'abstract',
-        #           'authors', 'terms']
+        #           'authors', 'terms', 'affiliation']
 
         return result
 

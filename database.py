@@ -109,6 +109,16 @@ class Publications:
             titles.append(r['title'])
         return titles
 
+    def get_all_titles_numbers(self):
+        """
+
+        """
+        rows = self.__table.select().execute().fetchall()
+        results = []
+        for r in rows:
+            results.append((r['title'], r['type']))
+        return results
+
 
 class Papers:
     """

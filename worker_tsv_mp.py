@@ -5,9 +5,11 @@ import csv
 from document import journal_articles_requests_urls,\
     retrieve_documents_from_url
 import os.path
+from multiprocessing import Process, Queue
+import multiprocessing
 
 
-def retrieve_papers_to_tsv(ptitle):
+def retrieve_papers_to_tsv(ptitle, ptype):
     """
 
     :param publication:
@@ -18,9 +20,9 @@ def retrieve_papers_to_tsv(ptitle):
     filename = 'tsv/' + ptitle_f + '.tsv'
     if os.path.isfile(filename):
         return
-    fields = ['number', 'doi', 'spage', 'epage', 'issue', 'partnum',
+    fields = ['type', 'number', 'doi', 'spage', 'epage', 'issue', 'partnum',
               'publication', 'year', 'rank', 'title', 'abstract',
-              'authors', 'terms']
+              'authors', 'terms', 'affiliation']
     with open(filename, 'ta', newline='') as fp:
         tsv_writer = csv.writer(fp, delimiter='\t')
         # tsv_writer.writerow(fields)
@@ -34,7 +36,7 @@ def retrieve_papers_to_tsv(ptitle):
                     paper_dicts = retrieve_documents_from_url(url)
                     paperlist = []
                     for pd in paper_dicts:
-                        p = Paper(ptitle, pd)
+                        p = Paper(ptitle, pd, type=ptype)
                         paperlist.append(p)
                     paper_str_list = []
                     for p in paperlist:
@@ -46,8 +48,38 @@ def retrieve_papers_to_tsv(ptitle):
             print(str(e))
 
 
+def mp_retriever(inqueue):
+    """
+
+    :param inqueue:
+    :return:
+    """
+    while True:
+        ptitle, ptype = inqueue.get()
+        if ptitle is None:
+            return
+        else:
+            retrieve_papers_to_tsv(ptitle, ptype)
+
 if __name__ == '__main__':
 
     publications_table = Publications()
-    for ptitle in publications_table.get_all_publications_title():
-        retrieve_papers_to_tsv(ptitle)
+    workers = 128
+    processes = []
+    title_queue = Queue()
+    for ptitle, ptype in publications_table.get_all_titles_numbers():
+        # print(ptype, ptitle)
+        # retrieve_papers_to_tsv(ptitle)
+        title_queue.put((ptitle, ptype))
+
+    for i in range(workers):
+        title_queue.put((None, None))
+
+    for i in range(workers):
+        p = Process(target=mp_retriever, args=(title_queue, ))
+        p.start()
+        processes.append(p)
+
+    for p in processes:
+        p.join()
+

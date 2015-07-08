@@ -13,6 +13,11 @@ def journal_list_url():
     return [base % i for i in range(1, 13)]
 
 
+def conference_list_url():
+    base = 'http://ieeexplore.ieee.org/xpl/conferences.jsp?pageNumber=%d'
+    return [base % i for i in range(1, 266)]
+
+
 def journal_url_to_number(url):
     digits = '01234567899'
     num = ''
@@ -71,6 +76,15 @@ def html_page_to_journals_list(html_text):
 def all_journal_titles():
     result = []
     for url in journal_list_url():
+        print(url)
+        r = requests.get(url)
+        result += html_page_to_journals_list(r.text)
+    return result
+
+
+def all_conference_titles():
+    result = []
+    for url in conference_list_url():
         print(url)
         r = requests.get(url)
         result += html_page_to_journals_list(r.text)
