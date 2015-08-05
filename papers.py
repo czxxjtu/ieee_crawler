@@ -149,7 +149,6 @@ class Paper:
 
         return result
 
-
     def from_dict(self, doc, remove_stopwords=True):
         """
 

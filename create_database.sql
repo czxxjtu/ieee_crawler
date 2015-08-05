@@ -57,4 +57,23 @@ CREATE TABLE Publications (
   partnum INTEGER,
   publisherid INTEGER,
   last_update INTEGER DEFAULT 0
+);
+
+
+CREATE TABLE Raw (
+  type VARCHAR(100),
+  number VARCHAR(50),
+  doi VARCHAR(100),
+  spage INTEGER,
+  epage INTEGER,
+  issue INTEGER,
+  partnum INTEGER,
+  publication VARCHAR(2000),
+  year INTEGER,
+  rank INTEGER,
+  title VARCHAR(2000),
+  abstract VARCHAR(10000),
+  authors VARCHAR(2000),
+  terms VARCHAR(2000),
+  affiliation VARCHAR(2000)
 )
